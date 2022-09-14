@@ -25,13 +25,12 @@ const showImages = (images) => {
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
     gallery.appendChild(div)
   })
-
 }
 
 const getImages = (query) => {
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
-    .then(data => showImages(data.hitS))
+    .then(data => showImages(data.hits))
     .catch(err => console.log(err))
 }
 
@@ -39,10 +38,13 @@ let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
   element.classList.add('added');
- 
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
+  } else if (sliders.includes(img)) {       // image select, unselect toggle
+    element.classList.remove('added');
+    let index = sliders.indexOf(img)
+    sliders.splice(index, 1)
   } else {
     alert('Hey, Already added !')
   }
@@ -110,11 +112,12 @@ const changeSlide = (index) => {
 }
 
 searchBtn.addEventListener('click', function () {
-  document.querySelector('.main').style.display = 'none';
+  document.querySelector('.main').style.display = 'block';    // display set as block
   clearInterval(timer);
   const search = document.getElementById('search');
   getImages(search.value)
   sliders.length = 0;
+  search.value = ''                                           // search input value clear
 })
 
 sliderBtn.addEventListener('click', function () {
